@@ -16,6 +16,11 @@ function getCookie(cname) {
     return "";
 }
 
+function nl2br(str, is_xhtml) {
+    var breakTag = (is_xhtml || typeof is_xhtml === 'undefined') ? '<br />' : '<br>';
+    return (str + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1' + breakTag + '$2');
+}
+
 var current_access_token = getCookie('github_user_token');
 
 $(function() {
@@ -74,7 +79,7 @@ $(function() {
 					});
 					
 					$.each(sorted_commits, function(index, commit) {
-						results += '<a href="' + commit.html_url + '" target="_blank">- ' + commit.commit.message + '</a><br />';
+						results += '<a href="' + commit.html_url + '" target="_blank">- ' + nl2br(commit.commit.message) + '</a><br />';
 					});
 					
 					$('#commit_aggregator_results').html(results);
