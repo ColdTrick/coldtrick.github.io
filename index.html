@@ -17,16 +17,15 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
 	
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="style.css">
 	
 	
 	<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 	
 	<!-- Latest compiled and minified JavaScript -->
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-	
-	
 
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+	<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -34,174 +33,17 @@
   </head>
 
   <body>
-  	<script>
-	  	$(function() {
-	  		$.getJSON('https://api.github.com/users/coldtrick/repos?sort=pushed&per_page=200', function(repos) {
-		  		$select = $('#commit_aggregator select');
-		  		if (repos) {
-					$(repos).each(function(index, repo) { 
-						
-						$select.append('<option>' + repo.full_name.toLowerCase() + '</option>');
-					});
-		  		}
-	  		});
-	  		
-		  	
-	  		$('#commit_aggregator').submit(function() {
-		  		$form = $(this);
-		  		$submit = $form.find('button');
-		  		$submit.attr('disabled', 'disabled').find('.fa').removeClass('hidden');
-
-				var repo = $form.find('select').val();
-
-				if (!repo) {
-					$('#commit_aggregator_results').html('');
-					$submit.attr('disabled', false).find('.fa').addClass('hidden');
-					return false;
-				}
-
-				var results = '<h4>Results</h4>';
-				
-				$.getJSON('https://api.github.com/repos/' + repo + '/tags', function(tags) {
-					if (tags) {
-						var latest_tag = tags[0].name;
-						results += '<p class="text-muted">Comparing master against tag ' + latest_tag + '</p>';
-
-						$.getJSON('https://api.github.com/repos/' + repo + '/compare/' + latest_tag + '...master', function(data) {
-
-							var sorted_commits = [];
-							 
-							if(data.commits) {
-								$(data.commits).each(function(id, commit) {
-									if (commit.commit.message.indexOf("Merge pull request") !== 0) {
-										sorted_commits.push(commit);
-									}
-								});
-							}
-
-							sorted_commits.sort(function(a,b) {
-								return a.commit.message.toLowerCase().localeCompare(b.commit.message.toLowerCase());
-							});
-							
-							$.each(sorted_commits, function(index, commit) {
-								results += '<a href="' + commit.html_url + '" target="_blank">- ' + commit.commit.message + '</a><br />';
-							});
-							
-							$('#commit_aggregator_results').html(results);
-							
-							$submit.attr('disabled', false).find('.fa').addClass('hidden');
-							
-				  		});
-						
-					} else {
-						results += 'no releases available';
-
-						$('#commit_aggregator_results').html(results);
-						
-						$submit.attr('disabled', false).find('.fa').addClass('hidden');
-					}
-					
-				});
-		  		
-		  		
-		  		return false;
-	  		});
-	  	});
-		
-		
-  	</script>
-	<style type='text/css'>
-	
-	/* Space out content a bit */
-body {
-  padding-top: 20px;
-  padding-bottom: 20px;
-}
-
-/* Everything but the jumbotron gets side spacing for mobile first views */
-.header,
-.marketing,
-.footer {
-  padding-right: 15px;
-  padding-left: 15px;
-}
-
-/* Custom page header */
-.header {
-  padding-bottom: 20px;
-  border-bottom: 1px solid #e5e5e5;
-}
-/* Make the masthead heading the same height as the navigation */
-.header h3 {
-  margin-top: 0;
-  margin-bottom: 0;
-  line-height: 40px;
-}
-
-/* Custom page footer */
-.footer {
-  padding-top: 19px;
-  color: #777;
-  border-top: 1px solid #e5e5e5;
-}
-
-/* Customize container */
-@media (min-width: 768px) {
-  .container {
-    max-width: 730px;
-  }
-}
-.container-narrow > hr {
-  margin: 30px 0;
-}
-
-/* Main marketing message and sign up button */
-.jumbotron {
-  text-align: center;
-  border-bottom: 1px solid #e5e5e5;
-}
-.jumbotron .btn {
-  padding: 14px 24px;
-  font-size: 21px;
-}
-
-/* Supporting marketing content */
-.marketing {
-  margin: 40px 0;
-}
-.marketing p + h4 {
-  margin-top: 28px;
-}
-
-/* Responsive: Portrait tablets and up */
-@media screen and (min-width: 768px) {
-  /* Remove the padding we set earlier */
-  .header,
-  .marketing,
-  .footer {
-    padding-right: 0;
-    padding-left: 0;
-  }
-  /* Space out the masthead */
-  .header {
-    margin-bottom: 30px;
-  }
-  /* Remove the bottom border on the jumbotron for visual effect */
-  .jumbotron {
-    border-bottom: 0;
-  }
-}
-	</style>
-    <div class="container">
+	<div class="container">
       <div class="header clearfix">
-        <!-- <nav>
+        <nav>
           <ul class="nav nav-pills pull-right">
-            <li role="presentation" class="active"><a href="#">Home</a></li>
-            <li role="presentation"><a href="#">About</a></li>
-            <li role="presentation"><a href="#">Contact</a></li>
+            <li role="presentation" id="set-token" class="active"><a href="#">Click to set user token</a></li>
+            <li role="presentation" id="remove-token" class="hidden"><a href="#">Click to remove user token</a></li>
+            <!-- <li role="presentation"><a href="#">About</a></li>
+            <li role="presentation"><a href="#">Contact</a></li> -->
           </ul>
         </nav>
-         -->
+        
         <h3 class="text-muted">ColdTrick Scripts Library</h3>
       </div>
 
@@ -256,6 +98,8 @@ body {
 
     </div> <!-- /container -->
 
+	<!-- Footer scripts -->
+	<script src="script.js"></script>
 
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script>
