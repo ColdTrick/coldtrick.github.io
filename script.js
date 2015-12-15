@@ -68,9 +68,14 @@ $(function() {
 					 
 					if(data.commits) {
 						$(data.commits).each(function(id, commit) {
-							if (commit.commit.message.indexOf("Merge pull request") !== 0) {
-								sorted_commits.push(commit);
+							if (commit.commit.message.indexOf("Merge pull request") == 0) {
+								return;
 							}
+							if (commit.commit.message.indexOf("Merge branch '") == 0) {
+								return;
+							}
+							
+							sorted_commits.push(commit);
 						});
 					}
 
