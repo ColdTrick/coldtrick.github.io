@@ -74,6 +74,9 @@ $(function() {
 							if (commit.commit.message.indexOf("Merge branch '") == 0) {
 								return;
 							}
+							if (commit.commit.message.indexOf("chore:") == 0) {
+								return;
+							}
 							
 							sorted_commits.push(commit);
 						});
