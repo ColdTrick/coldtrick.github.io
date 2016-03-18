@@ -41,6 +41,55 @@ $(function() {
   		}
 	});
 	
+	$('#release_report').submit(function() {
+		$form = $(this);
+  		$submit = $form.find('button');
+  		$submit.attr('disabled', 'disabled').find('.fa').removeClass('hidden');
+  		
+  		var results = '<h4>Results</h4>';
+  		$('#release_report_results').html(results);
+  		
+  		var i = 1;
+  		
+  		$.getJSON('https://api.github.com/users/coldtrick/repos?sort=pushed&per_page=200', function(repos) {
+  			if (repos) {
+  				$(repos).each(function(index, repo) {
+  					var repo_name = repo.full_name;
+  					
+  					$.getJSON('https://api.github.com/repos/' + repo_name + '/tags', function(tags) {
+  						var latest_tag = 0;
+							
+						if (typeof tags[0] != 'undefined') {
+							latest_tag = tags[0].commit.sha;
+						}
+
+						if (latest_tag == 0) {
+							// currently skipping repos without a tag
+//							$('#release_report_results').append('<div>' + i + ': ' + repo_name + ' - No tags</div>');
+//  							i++;
+						} else {
+							$.getJSON('https://api.github.com/repos/' + repo_name + '/commits', function(commits) {
+	  							
+	  	  						var latest_commit = commits[0].sha;
+	  							
+	  							if (latest_tag !== latest_commit) {
+	  								
+	  								
+	  								var link = '<a href="https://github.com/' + repo_name + '" target="_blank">' + repo_name + '</a>';
+	  	  							$('#release_report_results').append('<div>' + i + ': ' + link + '</div>');
+	  	  							i++;
+	  	  						}
+	  	  					});
+						}
+  					});
+  					
+  				});
+  	  		}
+  		});
+  		
+  		return false;
+	});
+	
   	
 	$('#commit_aggregator').submit(function() {
   		$form = $(this);
@@ -105,8 +154,7 @@ $(function() {
 			}
 			
 		});
-  		
-  		
+
   		return false;
 	});
 	
