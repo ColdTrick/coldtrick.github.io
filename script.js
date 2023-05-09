@@ -175,4 +175,18 @@ $(function() {
 		current_access_token = '';
 		$("#set-token, #remove-token").toggleClass("hidden");
 	});
+	
+	$.getJSON('https://api.github.com/users/coldtrick/repos?sort=pushed&per_page=200', function(repos) {
+		if (repos) {
+			$(repos).each(function(index, repo) {
+				var repo_name = repo.full_name;
+				
+				$.getJSON('https://api.github.com/repos/' + repo_name + '/contents/.github/workflows/lint.yml', function() {
+					var link = '<img src="https://github.com/' + repo_name + '/actions/workflows/lint.yml/badge.svg?event=push"></img>';
+					$('#lint_results').append('<div>' + link + ' <a href="https://github.com/' + repo_name + '" target="_blank">' + repo_name + '</a></div>');
+					i++;
+				});  					
+			});
+  		}
+	});
 });
