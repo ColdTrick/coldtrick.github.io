@@ -184,7 +184,6 @@ $(function() {
 				$.getJSON('https://api.github.com/repos/' + repo_name + '/contents/.github/workflows/lint.yml', function() {
 					var link = '<img src="https://github.com/' + repo_name + '/actions/workflows/lint.yml/badge.svg?event=push"></img>';
 					$('#lint_results').append('<div>' + link + ' <a href="https://github.com/' + repo_name + '" target="_blank">' + repo_name + '</a></div>');
-					i++;
 				});  					
 			});
   		}
