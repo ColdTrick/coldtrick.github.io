@@ -180,9 +180,16 @@ $(function() {
 		if (repos) {
 			$(repos).each(function(index, repo) {
 				var repo_name = repo.full_name;
+				if (repo_name === 'ColdTrick/.github') {
+					return;
+				}
 				
 				$.getJSON('https://api.github.com/repos/' + repo_name + '/contents/.github/workflows/lint.yml', function() {
-					var link = '<img src="https://github.com/' + repo_name + '/actions/workflows/lint.yml/badge.svg?event=push"></img>';
+					var base_url = 'https://github.com/' + repo_name + '/actions/workflows/';
+					
+					var link = '<a href="' + base_url + 'lint.yml" target="_blank"><img src="' + base_url + 'lint.yml/badge.svg?event=push"></img></a>';
+					link += ' <a href="' + base_url + 'phpunit.yml" target="_blank"><img src="' + base_url + 'phpunit.yml/badge.svg?event=push"></img></a>';
+					
 					$('#lint_results').append('<div>' + link + ' <a href="https://github.com/' + repo_name + '" target="_blank">' + repo_name + '</a></div>');
 				});  					
 			});
